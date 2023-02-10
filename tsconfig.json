@@ -1,0 +1,30 @@
+{
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"src/**/*.spec.ts"
+	],
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "ES2017",
+		"esModuleInterop": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"outDir": ".build",
+		"lib": [
+			"es2017",
+			"esnext.asynciterable"
+		]
+	},
+	"preserveConstEnums": true,
+	"strictNullChecks": true,
+	"sourceMap": true,
+	"target": "ES2017",
+	"outDir": ".build",
+	"lib": [
+		"es2017",
+		"esnext.asynciterable"
+	],
+	"moduleResolution": "node"
+}

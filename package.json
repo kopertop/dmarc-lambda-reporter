@@ -1,0 +1,62 @@
+{
+	"name": "dmarc-lambda-reporter",
+	"version": "1.0.0",
+	"description": "Parses DMARC Email Reports received from Amazon SES and stores them into AWS Timestream for analysis",
+	"main": "index.js",
+	"scripts": {
+		"clean": "rm -rf .build",
+		"build": "run-s clean build:*",
+		"build:tsc": "tsc",
+		"build:copy-package": "cp package.json .build/",
+		"build:copy-package-lock": "cp package-lock.json .build/",
+		"build:npm": "cp package.json package-lock.json .build/ && cd .build && npm install --production",
+		"build:archive": "cd .build && zip -r ../archive.zip *",
+		"deploy": "run-s clean build:* deploy:*",
+		"deploy:description": "aws lambda update-function-configuration --function-name dmarc-reporter --description \"`git log -1 --pretty=%B|head -1`\"",
+		"deploy:wait": "aws lambda wait function-updated --function-name dmarc-reporter",
+		"deploy:upload": "aws lambda update-function-code --function-name dmarc-reporter --zip-file fileb://archive.zip --publish > ./aws-resp.json",
+		"deploy:wait-for-publish": "aws lambda wait function-updated --function-name dmarc-reporter",
+		"lint": "eslint 'src/**/*.ts'",
+		"lint:fix": "npm run lint -- --fix"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/kopertop/dmarc-lambda-reporter.git"
+	},
+	"keywords": [
+		"DMARC",
+		"Email",
+		"AWS",
+		"Lambda"
+	],
+	"author": "Chris Moyer <kopertop@gmail.com>",
+	"license": "THE UNLICENSE",
+	"bugs": {
+		"url": "https://github.com/kopertop/dmarc-lambda-reporter/issues"
+	},
+	"homepage": "https://github.com/kopertop/dmarc-lambda-reporter#readme",
+	"devDependencies": {
+		"@types/aws-lambda": "^8.10.62",
+		"@types/node": "^18.13.0",
+		"@typescript-eslint/eslint-plugin": "^4.22.0",
+		"@typescript-eslint/parser": "^4.22.0",
+		"aws-sdk": "^2.1313.0",
+		"eslint": "^7.25.0",
+		"eslint-config-airbnb-typescript": "^12.3.1",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-config-typescript": "^3.0.0",
+		"eslint-import-resolver-typescript": "^2.4.0",
+		"eslint-plugin-es": "^4.1.0",
+		"eslint-plugin-import": "^2.22.1",
+		"eslint-plugin-prettier": "^3.4.0",
+		"npm-run-all": "^4.1.5",
+		"ts-node": "^8.10.2",
+		"typescript": "^3.9.10"
+	},
+	"dependencies": {
+		"email-addresses": "^4.0.0",
+		"mailparser": "^3.6.3",
+		"unzipper": "^0.10.11",
+		"xml2js": "^0.4.23"
+	}
+}

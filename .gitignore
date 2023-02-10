@@ -1,0 +1,14 @@
+# package directories
+node_modules
+jspm_packages
+
+# Build directories
+.build
+
+# Build files
+src/*.js
+archive.zip
+aws-resp.json
+
+# Vim
+*.swp
