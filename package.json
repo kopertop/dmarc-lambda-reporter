@@ -7,7 +7,7 @@
 		"clean": "rm -rf .build",
 		"test": "tsc --noEmit",
 		"build": "run-s clean build:*",
-		"build:tsc": "tsc",
+		"build:tsc": "tsc --project tsconfig.build.json",
 		"build:copy-package": "cp package.json .build/",
 		"build:copy-package-lock": "cp package-lock.json .build/",
 		"build:npm": "cp package.json package-lock.json .build/ && cd .build && npm install --production",
