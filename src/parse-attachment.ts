@@ -1,7 +1,4 @@
-import {
-	Readable,
-	Writable,
-} from 'stream';
+import { Readable, Writable } from 'stream';
 import unzip from 'unzipper';
 import { parseString } from 'xml2js';
 import zlib from 'zlib';
@@ -14,7 +11,21 @@ const types = [
 	'application/xml',
 ];
 
-export async function parseAttachment(attach: Readable, contentType: string) {
+/**
+ * @param binary Buffer or string with content to turn into a Readable stream
+ * returns readableInstanceStream Readable
+ */
+function bufferToStream(binary: Buffer | string): Readable {
+	const readableInstanceStream = new Readable({
+		read() {
+			this.push(binary);
+			this.push(null);
+		},
+	});
+	return readableInstanceStream;
+}
+
+export async function parseAttachment(attach: Buffer | string, contentType: string) {
 	if (types.includes(contentType)) {
 		return new Promise((accept) => {
 			const xmlArray = [];
@@ -27,7 +38,7 @@ export async function parseAttachment(attach: Readable, contentType: string) {
 			switch (contentType) {
 				case types[0]:
 				case types[1]:
-					attach.pipe(unzip.Parse()).on('entry', (entry) => {
+					bufferToStream(attach).pipe(unzip.Parse()).on('entry', (entry) => {
 						entry.pipe(file);
 					});
 					break;
@@ -35,7 +46,7 @@ export async function parseAttachment(attach: Readable, contentType: string) {
 				case types[3]:
 				case types[4]:
 					console.log('Parse via zlib', contentType);
-					attach.pipe(zlib.createUnzip()).pipe(file);
+					bufferToStream(attach).pipe(zlib.createUnzip()).pipe(file);
 					break;
 				default:
 					console.log(`Unknow attachment content-type: ${contentType}`);
