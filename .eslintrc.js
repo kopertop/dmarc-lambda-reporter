@@ -83,6 +83,7 @@ module.exports = {
 
 		// What is this?
 		'newline-per-chained-call': 'off',
+		'no-await-in-loop': 'off',
 	},
 	settings: {
 		'import/resolver': {
