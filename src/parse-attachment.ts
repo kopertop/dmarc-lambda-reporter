@@ -45,11 +45,10 @@ export async function parseAttachment(attach: Buffer | string, contentType: stri
 				case types[2]:
 				case types[3]:
 				case types[4]:
-					console.log('Parse via zlib', contentType);
 					bufferToStream(attach).pipe(zlib.createUnzip()).pipe(file);
 					break;
 				default:
-					console.log(`Unknow attachment content-type: ${contentType}`);
+					console.error(`Unknow attachment content-type: ${contentType}`);
 			}
 			file.on('finish', () => {
 				parseString(xmlArray.join(''), (error, xml) => {
@@ -63,6 +62,6 @@ export async function parseAttachment(attach: Buffer | string, contentType: stri
 			});
 		});
 	}
-	console.log(`Unknow attachment content-type: ${contentType}`);
+	console.error(`Unknow attachment content-type: ${contentType}`);
 	return null;
 }

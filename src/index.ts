@@ -30,5 +30,4 @@ export async function handler(event: S3Event) {
 			}
 		}
 	}
-	console.log(JSON.stringify(event));
 }

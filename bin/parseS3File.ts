@@ -25,7 +25,6 @@ async function main(s3URL: string) {
 				}
 			}
 		}
-		console.log(resp);
 	}
 }
 main(process.argv[2]);

@@ -58,6 +58,7 @@
 		"email-addresses": "^4.0.0",
 		"mailparser": "^3.6.3",
 		"unzipper": "^0.10.11",
+		"whois": "^2.14.0",
 		"xml2js": "^0.4.23"
 	}
 }

@@ -1,5 +1,7 @@
 import { TimestreamWrite } from 'aws-sdk';
 
+import { whois } from './whois';
+
 const timestream = new TimestreamWrite();
 
 export async function processDMARCFile(data: any) {
@@ -10,7 +12,7 @@ export async function processDMARCFile(data: any) {
 		for (const index in report.row) {
 			const row = report.row[index];
 			const identifier = report.identifiers[index] || report.identifiers[0];
-			records.push({
+			const record = {
 				MeasureName: data.policy.domain[0],
 				MeasureValue: row.count[0],
 				MeasureValueType: 'BIGINT',
@@ -24,12 +26,33 @@ export async function processDMARCFile(data: any) {
 					{ Name: 'spf', Value: row.policy_evaluated[0].spf[0], DimensionValueType: 'VARCHAR' },
 					{ Name: 'header_from', Value: identifier.header_from[0], DimensionValueType: 'VARCHAR' },
 				],
-			});
+			};
+			if (row.source_ip[0]) {
+				try {
+					const whoisResp = await whois(row.source_ip[0]);
+					for (const prop of ['OrgName', 'OrgId']) {
+						if (whoisResp?.[prop]?.[0]) {
+							record.Dimensions.push({
+								Name: prop,
+								Value: whoisResp[prop][0],
+								DimensionValueType: 'VARCHAR',
+							});
+						}
+					}
+				} catch (e) {
+					console.log(`ERROR Looking up ${row.source_ip[0]}`, e);
+				}
+			}
+			console.log(record);
+			records.push(record);
 		}
 	}
 	await timestream.writeRecords({
 		DatabaseName: 'DMARC',
 		TableName: 'reports',
 		Records: records,
-	}).promise();
+	}).promise().catch((e) => {
+		console.error('ERROR Writing to Timestream', e);
+		console.log(JSON.stringify(records));
+	});
 }
