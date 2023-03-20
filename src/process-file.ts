@@ -1,4 +1,5 @@
 import { TimestreamWrite } from 'aws-sdk';
+import chunk from 'chunk';
 
 import { whois } from './whois';
 
@@ -47,12 +48,15 @@ export async function processDMARCFile(data: any) {
 			records.push(record);
 		}
 	}
-	await timestream.writeRecords({
-		DatabaseName: 'DMARC',
-		TableName: 'reports',
-		Records: records,
-	}).promise().catch((e) => {
-		console.error('ERROR Writing to Timestream', e);
-		console.log(JSON.stringify(records));
-	});
+	// Batch the uploads in chunks of no more than 100 records
+	for (const recordChunk of chunk(records, 100)) {
+		await timestream.writeRecords({
+			DatabaseName: 'DMARC',
+			TableName: 'reports',
+			Records: recordChunk,
+		}).promise().catch((e) => {
+			console.error('ERROR Writing to Timestream', e);
+			console.log(JSON.stringify(records));
+		});
+	}
 }

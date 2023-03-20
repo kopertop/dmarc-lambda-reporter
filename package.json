@@ -55,6 +55,7 @@
 		"typescript": "^3.9.10"
 	},
 	"dependencies": {
+		"chunk": "^0.0.3",
 		"email-addresses": "^4.0.0",
 		"mailparser": "^3.6.3",
 		"unzipper": "^0.10.11",
