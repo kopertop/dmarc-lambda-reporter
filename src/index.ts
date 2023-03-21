@@ -1,33 +1,20 @@
-import type { S3Event } from 'aws-lambda';
-import { S3 } from 'aws-sdk';
+import type { APIGatewayEvent, S3Event } from 'aws-lambda';
 
-import { parseAttachment } from './parse-attachment';
-import { parseEmail } from './parser';
-import { processDMARCFile } from './process-file';
+import { handleMailgunEvent } from './mailgun';
+import { handleS3Event } from './s3event';
 
-const s3 = new S3();
+function isS3Event(event: any): event is S3Event {
+	return Boolean(event?.Records != null);
+}
 
-export async function handler(event: S3Event) {
-	for (const record of event.Records) {
-		if (record.s3) {
-			const s3Resp = await s3.getObject({
-				Bucket: record.s3.bucket.name,
-				Key: record.s3.object.key,
-			}).promise();
-			if (s3Resp.Body) {
-				const resp = await parseEmail(s3Resp.Body.toString());
-				if (resp.attachments) {
-					for (const attachment of resp.attachments) {
-						const attachmentData = await parseAttachment(
-							attachment.content,
-							attachment.contentType,
-						);
-						if (attachmentData) {
-							await processDMARCFile(attachmentData);
-						}
-					}
-				}
-			}
-		}
+/**
+ * Process either an S3 PutObject event, or a Mailgun Webook
+ *
+ * @param event S3Event or Mailgun Webhook
+ */
+export async function handler(event: S3Event | APIGatewayEvent) {
+	if (isS3Event(event)) {
+		return handleS3Event(event);
 	}
+	return handleMailgunEvent(event);
 }

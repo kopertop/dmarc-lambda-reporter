@@ -25,7 +25,17 @@ function bufferToStream(binary: Buffer | string): Readable {
 	return readableInstanceStream;
 }
 
-export async function parseAttachment(attach: Buffer | string, contentType: string) {
+export interface DMARCFile {
+	org: any;
+	reports: any;
+	date: any;
+	policy: any;
+}
+
+export async function parseAttachment(
+	attach: Buffer | string,
+	contentType: string,
+): Promise<DMARCFile> {
 	if (types.includes(contentType)) {
 		return new Promise((accept) => {
 			const xmlArray = [];

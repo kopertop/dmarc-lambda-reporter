@@ -51,8 +51,8 @@ export async function processDMARCFile(data: any) {
 	// Batch the uploads in chunks of no more than 100 records
 	for (const recordChunk of chunk(records, 100)) {
 		await timestream.writeRecords({
-			DatabaseName: 'DMARC',
-			TableName: 'reports',
+			DatabaseName: process.env.TIMESTREAM_DATABASE || 'DMARC',
+			TableName: process.env.TIMESTREAM_TABLE || 'reports',
 			Records: recordChunk,
 		}).promise().catch((e) => {
 			console.error('ERROR Writing to Timestream', e);
