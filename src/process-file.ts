@@ -54,8 +54,7 @@ export async function processDMARCFile(data: any) {
 			TableName: process.env.TIMESTREAM_TABLE || 'reports',
 			Records: recordChunk,
 		}).promise().catch((e) => {
-			console.error('ERROR Writing to Timestream', e);
-			console.log(JSON.stringify(records));
+			console.error('ERROR Writing to Timestream', e, JSON.stringify(recordChunk));
 		});
 	}
 }
