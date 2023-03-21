@@ -10,7 +10,7 @@
 		"build:tsc": "tsc --project tsconfig.build.json",
 		"build:copy-package": "cp package.json .build/",
 		"build:copy-package-lock": "cp package-lock.json .build/",
-		"build:npm": "cp package.json package-lock.json .build/ && cd .build && npm install --production",
+		"build:npm": "cp package.json package-lock.json .build/ && cd .build && npm install --omit=dev",
 		"build:archive": "cd .build && zip -r ../archive.zip *",
 		"deploy": "run-s clean build:* deploy:*",
 		"deploy:description": "aws lambda update-function-configuration --function-name dmarc-reporter --description \"`git log -1 --pretty=%B|head -1`\"",
