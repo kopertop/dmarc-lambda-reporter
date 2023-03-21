@@ -44,7 +44,6 @@ export async function processDMARCFile(data: any) {
 					console.log(`ERROR Looking up ${row.source_ip[0]}`, e);
 				}
 			}
-			console.log(record);
 			records.push(record);
 		}
 	}
