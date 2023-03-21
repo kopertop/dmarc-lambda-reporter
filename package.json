@@ -1,6 +1,6 @@
 {
 	"name": "dmarc-lambda-reporter",
-	"version": "1.0.0",
+	"version": "1.1.0",
 	"description": "Parses DMARC Email Reports received from Amazon SES and stores them into AWS Timestream for analysis",
 	"main": "index.js",
 	"scripts": {
