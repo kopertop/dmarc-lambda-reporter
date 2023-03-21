@@ -15,7 +15,10 @@ const types = [
  * @param binary Buffer or string with content to turn into a Readable stream
  * returns readableInstanceStream Readable
  */
-function bufferToStream(binary: Buffer | string): Readable {
+export function bufferToStream(binary: Readable | Buffer | string): Readable {
+	if (binary instanceof Readable) {
+		return binary;
+	}
 	const readableInstanceStream = new Readable({
 		read() {
 			this.push(binary);
